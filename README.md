@@ -8,5 +8,5 @@ This is a simple example of how to use the AWS SDK with Localstack.
 - [ ] S3 + Trigger
 - [x] DynamoDB
 - [ ] Lambda
-- [ ] SQS
+- [x] SQS
 - [ ] SNS

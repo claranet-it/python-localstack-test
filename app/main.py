@@ -2,19 +2,25 @@ import json
 import time
 from infrastructure.s3_client import get_s3_client
 from infrastructure.dynamodb_client import get_dynamodb_client
+from infrastructure.sqs_client import get_sqs_client
 from use_case.read_from_bucket_use_case import read_from_bucket_use_case
 from use_case.write_to_bucket_use_case import write_to_bucket_use_case
 from use_case.create_bucket_use_case import create_bucket_use_case
 from use_case.create_dynamodb_table import create_dynamodb_table
 from use_case.write_to_dynamodb_use_case import write_to_dynamodb_use_case
 from use_case.read_from_dynamodb_use_case import read_from_dynamodb_use_case
+from use_case.create_queue_use_case import create_queue_use_case
+from use_case.write_to_queue_use_case import write_to_queue_use_case
+from use_case.read_from_queue_use_case import read_from_queue_use_case
 
 
 BUCKET_NAME = "test-bucket"
 TABLE_NAME = "test-table"
+QUEUE_NAME = "test-queue"
 
 s3_client = get_s3_client()
 dynamodb_client = get_dynamodb_client()
+sqs_client = get_sqs_client()
 
 
 def main(use_case):    
@@ -66,6 +72,26 @@ def main(use_case):
                 table_name=TABLE_NAME,
             )
             print(items)
+        case "7":
+            create_queue_use_case(
+                sqs_client, 
+                queue_name=QUEUE_NAME
+            )
+            print("Queue created successfully")
+        case "8":
+            data = "{\"body\": \"test-data\"}"
+            write_to_queue_use_case(
+                sqs_client, 
+                queue_name=QUEUE_NAME,
+                data=data
+            )
+            print("New message written to SQS queue - data: %s" % (data))
+        case "9":
+            message = read_from_queue_use_case(
+                sqs_client, 
+                queue_name=QUEUE_NAME
+            )
+            print(message["Messages"][0]["Body"])
         case _:
             print("Invalid use case")
     
@@ -79,6 +105,9 @@ if __name__ == "__main__":
     4. Create DynamoDB table
     5. Write to DynamoDB
     6. Read from DynamoDB
+    7. Create SQS queue
+    8. Send message to SQS queue
+    9. Read message from SQS queue
 
     Enter use case: 
     """
