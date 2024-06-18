@@ -43,8 +43,11 @@ def main(use_case):
                 bucket_name=BUCKET_NAME, 
                 key="test-key"
             )
-            data = json.loads(obj["Body"].read())
-            print(data)        
+            if obj is None:
+                print("No object found with key: test-key")
+            else:
+                data = json.loads(obj["Body"].read())
+                print(data)        
         case "3":
             key = str(time.time())
             data = f"test-data {key}"
