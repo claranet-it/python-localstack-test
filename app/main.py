@@ -8,7 +8,6 @@ from infrastructure.lambda_client import get_lambda_client
 
 from use_case.read_from_bucket_use_case import read_from_bucket_use_case
 from use_case.write_to_bucket_use_case import write_to_bucket_use_case
-from use_case.create_bucket_use_case import create_bucket_use_case
 from use_case.create_dynamodb_table import create_dynamodb_table
 from use_case.write_to_dynamodb_use_case import write_to_dynamodb_use_case
 from use_case.read_from_dynamodb_use_case import read_from_dynamodb_use_case
@@ -30,14 +29,8 @@ lambda_client = get_lambda_client()
 
 
 def main(use_case):    
-    match use_case:
+    match use_case:        
         case "1":
-            create_bucket_use_case(
-                s3_client, 
-                bucket_name=BUCKET_NAME
-            )
-            print("Bucket created successfully")        
-        case "2":
             with open('data/example.json', 'r') as f:
                 data = f.read()
             
@@ -48,7 +41,7 @@ def main(use_case):
                 data=data
             )
             print("Data written to bucket successfully")
-        case "3":
+        case "2":
             obj = read_from_bucket_use_case(
                 s3_client, 
                 bucket_name=BUCKET_NAME, 
@@ -56,13 +49,13 @@ def main(use_case):
             )
             data = json.loads(obj["Body"].read())
             print(data)
-        case "4":
+        case "3":
             create_dynamodb_table(
                 dynamodb_client, 
                 table_name=TABLE_NAME, 
             )
             print("Table created successfully")
-        case "5":
+        case "4":
             key = str(time.time())
             data = f"test-data {key}"
             write_to_dynamodb_use_case(
@@ -72,19 +65,19 @@ def main(use_case):
                 data=data,
             )
             print("New item written to dynamodb - key: %s, data: %s" % (key, data))
-        case "6":
+        case "5":
             items = read_from_dynamodb_use_case(
                 dynamodb_client, 
                 table_name=TABLE_NAME,
             )
             print(items)
-        case "7":
+        case "6":
             create_queue_use_case(
                 sqs_client, 
                 queue_name=QUEUE_NAME
             )
             print("Queue created successfully")
-        case "8":
+        case "7":
             data = "{\"body\": \"test-data\"}"
             write_to_queue_use_case(
                 sqs_client, 
@@ -92,16 +85,16 @@ def main(use_case):
                 data=data
             )
             print("New message written to SQS queue - data: %s" % (data))
-        case "9":
+        case "8":
             message = read_from_queue_use_case(
                 sqs_client, 
                 queue_name=QUEUE_NAME
             )
             print(message["Messages"][0]["Body"])
-        case "10":
+        case "9":
             functions = list_functions_use_case(lambda_client)
             print("\n".join([f"Function Name: {function['FunctionName']}, ARN: {function['FunctionArn']}" for function in functions]))
-        case "11":
+        case "10":
             response = invoke_functions_use_case(lambda_client)
             streaming_body = response['Payload']
             print(streaming_body.read().decode('utf-8'))
@@ -111,18 +104,17 @@ def main(use_case):
 
 
 if __name__ == "__main__":
-    prompt = """
-     1. Create bucket
-     2. Write to bucket
-     3. Read from bucket
-     4. Create DynamoDB table
-     5. Write to DynamoDB
-     6. Read from DynamoDB
-     7. Create SQS queue
-     8. Send message to SQS queue
-     9. Read message from SQS queue
-    10. List functions
-    11. Invoke function
+    prompt = """     
+     1. Write to bucket
+     2. Read from bucket
+     3. Create DynamoDB table
+     4. Write to DynamoDB
+     5. Read from DynamoDB
+     6. Create SQS queue
+     7. Send message to SQS queue
+     8. Read message from SQS queue
+     9. List functions
+    10. Invoke function
 
     Enter use case: 
     """
