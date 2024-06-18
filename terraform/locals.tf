@@ -3,5 +3,6 @@ locals {
   output_path   = "${path.module}/../build/lambda_main.zip"
   function_name = "lambda_main-${var.stage}"
   bucket_name   = "test-bucket"
-  queue_name    = "test-queue"  
+  queue_name    = "test-queue"
+  table_name    = "test-table"  
 }

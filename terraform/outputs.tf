@@ -9,3 +9,7 @@ output "test_bucket_arn" {
 output "test_queue_arn" {
   value = aws_sqs_queue.test_queue.arn
 }
+
+output "test_table_arn" {
+  value = aws_dynamodb_table.test_table.arn
+}
