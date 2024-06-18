@@ -8,6 +8,7 @@ def get_sqs_client():
             "sqs",
             endpoint_url=config.AWS_ENDPOINT_URL,
             aws_access_key_id="test",
-            aws_secret_access_key="test",            
+            aws_secret_access_key="test",
+            region_name=config.AWS_REGION,               
         )
     return boto3.client("sqs")

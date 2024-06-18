@@ -11,7 +11,6 @@ from use_case.write_to_bucket_use_case import write_to_bucket_use_case
 from use_case.create_dynamodb_table import create_dynamodb_table
 from use_case.write_to_dynamodb_use_case import write_to_dynamodb_use_case
 from use_case.read_from_dynamodb_use_case import read_from_dynamodb_use_case
-from use_case.create_queue_use_case import create_queue_use_case
 from use_case.write_to_queue_use_case import write_to_queue_use_case
 from use_case.read_from_queue_use_case import read_from_queue_use_case
 from use_case.list_functions_use_case import list_functions_use_case
@@ -70,14 +69,8 @@ def main(use_case):
                 dynamodb_client, 
                 table_name=TABLE_NAME,
             )
-            print(items)
+            print(items)        
         case "6":
-            create_queue_use_case(
-                sqs_client, 
-                queue_name=QUEUE_NAME
-            )
-            print("Queue created successfully")
-        case "7":
             data = "{\"body\": \"test-data\"}"
             write_to_queue_use_case(
                 sqs_client, 
@@ -85,16 +78,19 @@ def main(use_case):
                 data=data
             )
             print("New message written to SQS queue - data: %s" % (data))
-        case "8":
-            message = read_from_queue_use_case(
+        case "7":
+            data = read_from_queue_use_case(
                 sqs_client, 
                 queue_name=QUEUE_NAME
             )
-            print(message["Messages"][0]["Body"])
-        case "9":
+            if not "Messages" in data:
+                print("No messages in the queue")
+            else:
+                print(data["Messages"][0]["Body"])
+        case "8":
             functions = list_functions_use_case(lambda_client)
             print("\n".join([f"Function Name: {function['FunctionName']}, ARN: {function['FunctionArn']}" for function in functions]))
-        case "10":
+        case "9":
             response = invoke_functions_use_case(lambda_client)
             streaming_body = response['Payload']
             print(streaming_body.read().decode('utf-8'))
@@ -109,12 +105,11 @@ if __name__ == "__main__":
      2. Read from bucket
      3. Create DynamoDB table
      4. Write to DynamoDB
-     5. Read from DynamoDB
-     6. Create SQS queue
-     7. Send message to SQS queue
-     8. Read message from SQS queue
-     9. List functions
-    10. Invoke function
+     5. Read from DynamoDB     
+     6. Send message to SQS queue
+     7. Read message from SQS queue
+     8. List functions
+     9. Invoke function
 
     Enter use case: 
     """
