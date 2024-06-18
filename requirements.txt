@@ -1,1 +1,2 @@
 boto3==1.34.125
+terraform-local==0.18.1

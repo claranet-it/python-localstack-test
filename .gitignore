@@ -142,3 +142,11 @@ cython_debug/
 
 # Localstack
 .localstack/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+.terraform.tfstate
+.terraform.tfstate.backup
+terraform.tfvars
+terraform.*.tfvars
